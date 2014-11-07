@@ -19,6 +19,12 @@ sudo add-apt-repository ppa:marutter/rrutter
 sudo apt-get update
 sudo apt-get -y install r-base r-base-dev
 sudo R CMD javareconf
+sudo R -e "install.packages('httpuv', repos = 'http://cran.rstudio.com/', dep = TRUE)"
+sudo R -e "install.packages('caTools', repos = 'http://cran.rstudio.com/', dep = TRUE)"
+sudo R -e "install.packages('RJSONIO', repos = 'http://cran.rstudio.com/', dep = TRUE)"
+sudo R -e "install.packages('xtable', repos = 'http://cran.rstudio.com/', dep = TRUE)"
+sudo R -e "install.packages('digest', repos = 'http://cran.rstudio.com/', dep = TRUE)"
+sudo R -e "install.packages('htmltools', repos = 'http://cran.rstudio.com/', dep = TRUE)"
 sudo R -e "install.packages('http://cran.r-project.org/src/contrib/Archive/shiny/shiny_0.10.1.tar.gz', repos=NULL, type='source')"
 sudo R -e "install.packages('rmarkdown', repos = 'http://cran.rstudio.com/', dep = TRUE)"
 sudo R -e "install.packages('devtools', repos = 'http://cran.rstudio.com/', dep = TRUE)"
