@@ -213,16 +213,28 @@ agg.twitter <- function(json, split = T){
     if (length(which(is.na(twitter$user_id)==T)) > 0) {
       rt <- twitter[which(is.na(twitter$user_id)==T),]
       rt <- rt %>%
-        dplyr::select(rted_post_id, content, rt_followers_count,
+        dplyr::select(rted_post_id, rt_followers_count,
                       rt_count, sentiment, klout) %>%
-        dplyr::group_by(rted_post_id, content) %>%
-        dplyr::summarise(engage = mean(as.numeric(as.character(rt_count)), na.rm = TRUE),
-                         reach = sum(as.numeric(as.character(rt_followers_count)), na.rm = TRUE),
-                         sent = mean(as.numeric(as.character(sentiment)), na.rm = TRUE),
-                         influence = mean(as.numeric(as.character(klout)), na.rm = TRUE)) %>%
+        dplyr::group_by(rted_post_id) %>%
+        dplyr::summarise(engage_rt = mean(as.numeric(as.character(rt_count)), na.rm = TRUE),
+                         reach_rt = sum(as.numeric(as.character(rt_followers_count)), na.rm = TRUE),
+                         sent_rt = mean(as.numeric(as.character(sentiment)), na.rm = TRUE),
+                         influence_rt = mean(as.numeric(as.character(klout)), na.rm = TRUE)) %>%
         dplyr::mutate(post_id = rted_post_id) %>%
-        dplyr::select(post_id, content, sent, influence, reach, engage)
-      twitter <- join(rt, interaction, type = 'full', by = "post_id")
+        dplyr::select(post_id, sent_rt, influence_rt, reach_rt, engage_rt)
+      twitter <- left_join(interaction, rt, by = "post_id")
+      twitter[is.na(twitter)] <- 0
+      twitter <- twitter %>% 
+        dplyr::mutate(sentiment = sent + sent_rt,
+                      influenced = influence_rt + influence,
+                      reached = reach + reach_rt,
+                      engaged = engage + engage_rt) %>%
+        dplyr::select(post_id,
+                      content,
+                      'sent' = sentiment, 
+                      'influence' = influenced, 
+                      'reach' = reached,
+                      'engage' = engaged)
     } else {
       twitter <- interaction
     }
@@ -239,16 +251,28 @@ agg.twitter <- function(json, split = T){
     if (length(which(is.na(twitter$user_id)==T)) > 0) {
       rt <- twitter[which(is.na(twitter$user_id)==T),]
       rt <- rt %>%
-        dplyr::select(rted_post_id, content, rt_followers_count,
+        dplyr::select(rted_post_id, rt_followers_count,
                       rt_count, sentiment, klout) %>%
-        dplyr::group_by(rted_post_id, content) %>%
-        dplyr::summarise(engage = mean(as.numeric(as.character(rt_count)), na.rm = TRUE),
-                         reach = sum(as.numeric(as.character(rt_followers_count)), na.rm = TRUE),
-                         sent = mean(as.numeric(as.character(sentiment)), na.rm = TRUE),
-                         influence = mean(as.numeric(as.character(klout)), na.rm = TRUE)) %>%
+        dplyr::group_by(rted_post_id) %>%
+        dplyr::summarise(engage_rt = mean(as.numeric(as.character(rt_count)), na.rm = TRUE),
+                         reach_rt = sum(as.numeric(as.character(rt_followers_count)), na.rm = TRUE),
+                         sent_rt = mean(as.numeric(as.character(sentiment)), na.rm = TRUE),
+                         influence_rt = mean(as.numeric(as.character(klout)), na.rm = TRUE)) %>%
         dplyr::mutate(post_id = rted_post_id) %>%
-        dplyr::select(post_id, content, sent, influence, reach, engage)
-      twitter <- join(rt, interaction, type = 'full', by = "post_id")
+        dplyr::select(post_id, sent_rt, influence_rt, reach_rt, engage_rt)
+      twitter <- left_join(interaction, rt, by = "post_id")
+      twitter[is.na(twitter)] <- 0
+      twitter <- twitter %>% 
+        dplyr::mutate(sentiment = sent + sent_rt,
+                      influenced = influence_rt + influence,
+                      reached = reach + reach_rt,
+                      engaged = engage + engage_rt) %>%
+        dplyr::select(post_id,
+                      content,
+                      'sent' = sentiment, 
+                      'influence' = influenced, 
+                      'reach' = reached,
+                      'engage' = engaged)
     } else {
       twitter <- interaction
     }
@@ -262,6 +286,9 @@ agg.twitter <- function(json, split = T){
                      influence = mean(influence, na.rm = TRUE))
   return(t)  
 }
+
+
+
 
 
 
